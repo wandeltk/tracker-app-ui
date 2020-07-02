@@ -1,5 +1,5 @@
-import React from 'react';
-import {Theme, makeStyles, createStyles, useTheme, CssBaseline, AppBar, Toolbar, IconButton, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button} from '@material-ui/core'
+import React, { useState } from 'react';
+import {Theme, makeStyles, createStyles, useTheme, CssBaseline, AppBar, Toolbar, IconButton, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button, Grid, Modal, FormControl, FormLabel, TextField} from '@material-ui/core'
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -7,6 +7,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import InboxIcon from '@material-ui/icons/Inbox';
 import MailIcon from '@material-ui/icons/Mail';
 import { Link } from 'react-router-dom';
+import CloseIcon from '@material-ui/icons/Close'
 
 
 const drawerWidth = 240;
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-end',
-      padding: theme.spacing(0, 1),
+      padding: theme.spacing(0, 0),
       // necessary for content to be below app bar
       ...theme.mixins.toolbar,
     },
@@ -72,6 +73,12 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    paper: {
+        position: 'absolute',
+        backgroundColor: theme.palette.background.paper,
+        borderColor: theme.palette.background.paper,
+        padding: theme.spacing(2, 4, 3),
+      },
   }),
 );
 
@@ -79,6 +86,19 @@ const NavbarComponent = () => {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [openModal, setOpenModal] = React.useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleOpen = () => {
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setUsername("");
+        setPassword("");
+        setOpenModal(false);
+    };
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -87,6 +107,42 @@ const NavbarComponent = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    const setUsernameState = (event: any) => {
+        setUsername(event.target.value)
+    }
+    const setPasswordState = (event: any) => {
+        setPassword(event.target.value)
+    }
+
+    const body = (
+        <div style={{top: '35%', left: '40%'}} className={classes.paper}>
+            <div style={{marginBottom: '2%'}}>
+            <Grid container>
+                <Grid item xs={10}>
+                    <Typography variant="h4">Login</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <IconButton onClick={handleCloseModal}>
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </Grid>
+            </Grid>
+            </div>
+            
+            <form>
+                <div style={{marginTop:'2%'}}>
+                    <TextField onChange={setUsernameState} label="Username" variant="outlined"/>
+                </div>
+                <div style={{marginTop:'2%'}}>
+                    <TextField onChange={setPasswordState} label="Password" variant="outlined"/>
+                </div>
+                <div style={{marginTop:'2%'}}>
+                    <Button variant="contained">Login</Button>
+                </div>
+            </form>
+        </div>
+      );
 
     return(
         <>
@@ -99,21 +155,42 @@ const NavbarComponent = () => {
                 })}
             >
                 <Toolbar>
-                <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    edge="start"
-                    className={clsx(classes.menuButton, {
-                    [classes.hide]: open,
-                    })}
-                >
-                    <MenuIcon />
-                </IconButton>
-                <Typography variant="h6" noWrap>
-                    My Tracker App
-                </Typography>
-                <Button>Login</Button>
+                <Grid container>
+                    <Grid item>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpen}
+                            edge="start"
+                            className={clsx(classes.menuButton, {
+                            [classes.hide]: open,
+                            })}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item xs={10}>
+                        <Typography style={{marginTop: '.5%'}} variant="h6" >
+                            My Tracker App
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <div style={{marginTop: '1%'}}>
+                            <Link to={"/register"}>
+                                <Button>Register</Button>
+                            </Link>
+                            <Button onClick={handleOpen}>Login</Button>
+                            <Modal
+                                open={openModal}
+                                closeAfterTransition={true}
+                                onClose={handleCloseModal}
+                                disableBackdropClick={true}
+                            >
+                                {body}
+                            </Modal>
+                        </div>
+                    </Grid>
+                </Grid>
                 </Toolbar>
             </AppBar>
             <Drawer

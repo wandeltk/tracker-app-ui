@@ -5,6 +5,8 @@ import './App.css';
 import HomeComponent from './components/HomeComponent';
 import NavbarComponent from './components/NavbarComponent';
 import { makeStyles, Theme, createStyles, useTheme } from '@material-ui/core';
+import RegisterComponent from './components/RegisterComponent';
+import MyTrackerComponent from './components/MyTrackersComponent';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,14 +22,16 @@ function App() {
   const theme = useTheme();
   return (
     <>
+    <Router>
     <NavbarComponent />
     <main className={classes.content}>
-      <Router>
-        <Switch>
-          <Route path="/" render={() => <HomeComponent/>}/>
-        </Switch>
-      </Router>
+      <Switch>
+        <Route path="/" render={() => <HomeComponent/>}/>
+        <Route path="/register" render={() => <RegisterComponent/>}/>
+        <Route path="/my-trackers" render={() => <MyTrackerComponent/>}/>
+      </Switch>
     </main>
+    </Router>
     </>
   );
 }
